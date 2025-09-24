@@ -18,6 +18,39 @@ class CustomerController extends Controller
 		return view('customers.create');
 	}
 
+	public function search(Request $request)
+	{
+		$validated = $request->validate([
+			'query' => ['required', 'string', 'max:50'],
+		]);
+
+		$raw = trim($validated['query']);
+
+		$customer = Customer::query()
+			->where('phone', $raw)
+			->orWhere('national_id', $raw)
+			->first();
+
+		if ($customer) {
+			return redirect()->route('customers.show', $customer);
+		}
+
+		return back()->withInput()->with('status', 'هذا العميل غير موجود');
+	}
+
+    public function show(Customer $customer)
+    {
+        $customer->load([
+            'contracts' => function ($q) {
+                $q->latest('start_date');
+            },
+            'contracts.payments' => function ($q) {
+                $q->orderBy('month');
+            },
+        ]);
+        return view('customers.show', compact('customer'));
+    }
+
 	public function store(Request $request)
 	{
 		$validated = $request->validate([

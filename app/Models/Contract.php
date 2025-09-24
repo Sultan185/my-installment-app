@@ -11,6 +11,17 @@ class Contract extends Model
 {
 	use HasFactory;
 
+    protected $fillable = [
+        'customer_id',
+        'device_type',
+        'serial_number',
+        'price_total',
+        'down_payment',
+        'remaining_amount',
+        'installment_months',
+        'start_date',
+    ];
+
 	/**
 	 * Get the customer that owns the contract.
 	 */

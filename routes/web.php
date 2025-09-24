@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\PaymentController;
 
-Route::get('/login', function () {
+Route::get('/', function () {
 	return view('auth.login');
 })->name('login.form');
 
@@ -17,13 +19,18 @@ Route::middleware('auth')->group(function () {
 		return view('home');
 	})->name('home');
 
-	// Customers CRUD
-	Route::resource('customers', CustomerController::class)->except(['show']);
+	// Search customer by phone or national id
+	Route::post('/customers/search', [CustomerController::class, 'search'])->name('customers.search');
 
-	// Placeholder for contracts create (to be implemented later)
-	Route::get('/contracts/create', function () {
-		return 'Create Contract form placeholder';
-	})->name('contracts.create');
+    // Customers CRUD
+    Route::resource('customers', CustomerController::class);
+
+    // Contracts
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+    Route::post('/contracts', [ContractController::class, 'store'])->name('contracts.store');
+
+    // Payments
+    Route::post('/contracts/{contract}/payments', [PaymentController::class, 'store'])->name('payments.store');
 });
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -33,6 +40,6 @@ Route::middleware('auth')->group(function () {
 	Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
 });
 
-Route::get('/', function () {
-	return view('landing');
-});
+// Route::get('/', function () {
+// 	return view('landing');
+// });

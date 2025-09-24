@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.rtl.min.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -8,4 +9,88 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Minimal, neutral, RTL-friendly styling */
+@layer base {
+    html[dir="rtl"] body {
+        font-family: var(--font-sans);
+        background: #f7f7f8;
+        color: #111827;
+        line-height: 1.6;
+    }
+
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+}
+
+@layer components {
+    .container {
+        max-width: 960px;
+        padding: 16px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .page-title { font-size: 20px; font-weight: 700; margin: 0 0 16px; }
+
+    .toolbar { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
+
+    .alert {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin: 8px 0 16px;
+    }
+
+    .form { display: grid; gap: 12px; }
+    .form-group { display: grid; gap: 6px; }
+    .label { font-weight: 600; font-size: 14px; }
+    .input {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 10px 12px;
+        background: #ffffff;
+        outline: none;
+    }
+    .input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+
+    .actions { display: flex; gap: 8px; align-items: center; }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        background: #111827;
+        color: #ffffff;
+        cursor: pointer;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background: #ffffff; color: #111827; border-color: #d1d5db; }
+    .btn-danger { background: #dc2626; }
+    .btn-link { background: transparent; color: #2563eb; padding: 0; border: none; }
+
+    .table { width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 10px; overflow: hidden; }
+    .table th, .table td { border-bottom: 1px solid #e5e7eb; padding: 10px 12px; text-align: start; }
+    .table thead th { background: #f3f4f6; font-weight: 700; }
+    .table tbody tr:hover { background: #fafafa; }
+}
+
+@layer utilities {
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
 }

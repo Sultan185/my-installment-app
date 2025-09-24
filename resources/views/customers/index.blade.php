@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>العملاء</title>
-		<style>
-			table { border-collapse: collapse; width: 100%; }
-			th, td { border: 1px solid #ccc; padding: 8px; }
-			nav a, a.button, button { margin-left: 8px; }
-		</style>
-	</head>
-	<body>
-		<h1>قائمة العملاء</h1>
-		@if (session('status'))
-			<div>{{ session('status') }}</div>
-		@endif
-		<nav>
-			<a href="{{ route('home') }}">الرئيسية</a>
-			<a href="{{ route('customers.create') }}">إنشاء عميل</a>
-		</nav>
-		<table>
+@extends('layouts.app')
+
+@section('title', 'العملاء')
+
+@section('content')
+	<h1 class="h4 mb-3">قائمة العملاء</h1>
+    @if (session('status'))
+		<div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+	<nav class="d-flex gap-2 mb-3">
+		<a class="btn btn-outline-secondary" href="{{ route('home') }}">الرئيسية</a>
+		<a class="btn btn-primary" href="{{ route('customers.create') }}">إنشاء عميل</a>
+	</nav>
+	<div class="card shadow-sm">
+		<table class="table table-hover table-striped mb-0">
 			<thead>
 				<tr>
 					<th>الاسم</th>
@@ -35,11 +28,12 @@
 						<td>{{ $customer->national_id }}</td>
 						<td>{{ $customer->phone }}</td>
 						<td>
-							<a class="button" href="{{ route('customers.edit', $customer) }}">تعديل</a>
+						<a class="btn btn-sm btn-outline-secondary" href="{{ route('customers.show', $customer) }}">عرض</a>
+							<a class="btn btn-sm btn-outline-primary" href="{{ route('customers.edit', $customer) }}">تعديل</a>
 							<form method="POST" action="{{ route('customers.destroy', $customer) }}" style="display:inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
 								@csrf
 								@method('DELETE')
-								<button type="submit">حذف</button>
+								<button class="btn btn-sm btn-danger" type="submit">حذف</button>
 							</form>
 						</td>
 					</tr>
@@ -48,9 +42,9 @@
 				@endforelse
 			</tbody>
 		</table>
+	</div>
 
-		<div style="margin-top:12px;">
-			{{ $customers->links() }}
-		</div>
-	</body>
-</html>
+	<div class="mt-3">
+		{{ $customers->links() }}
+	</div>
+@endsection

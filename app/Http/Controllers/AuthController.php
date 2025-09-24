@@ -10,34 +10,39 @@ use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
-	public function login(Request $request)
-	{
-		$credentials = $request->validate([
-			'identifier' => ['required', 'string'], // name or email
-			'password' => ['required', 'string'],
-		]);
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'identifier' => ['required', 'string'], // الاسم أو البريد
+            'password' => ['required', 'string'],
+        ], [
+            'identifier.required' => 'من فضلك أدخل البريد الإلكتروني أو اسم المستخدم.',
+            'password.required' => 'من فضلك أدخل كلمة المرور.',
+        ]);
 
-		$identifier = $credentials['identifier'];
-		$password = $credentials['password'];
+        $identifier = $credentials['identifier'];
+        $password = $credentials['password'];
 
-		// Determine if identifier is an email; otherwise treat as name
-		$field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+        // التحقق إذا كان البريد أو اسم مستخدم
+        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
-		$user = User::where($field, $identifier)->first();
-		if (!$user || !Hash::check($password, $user->password)) {
-			return back()->withErrors([
-				'identifier' => 'Invalid credentials.',
-			])->onlyInput('identifier');
-		}
+        $user = User::where($field, $identifier)->first();
 
-		Auth::login($user, $request->boolean('remember'));
+        if (!$user || !Hash::check($password, $user->password)) {
+            return back()->withErrors([
+                'identifier' => 'بيانات الدخول غير صحيحة.',
+            ])->onlyInput('identifier');
+        }
 
-		$request->session()->regenerate();
+        Auth::login($user, $request->boolean('remember'));
 
-		return redirect()->intended('/home');
-	}
+        $request->session()->regenerate();
 
-	public function logout(Request $request)
+        return redirect()->intended('/home')->with('status', 'تم تسجيل الدخول بنجاح.');
+    }
+
+
+    public function logout(Request $request)
 	{
 		Auth::logout();
 
@@ -47,24 +52,30 @@ class AuthController extends Controller
 		return redirect('/');
 	}
 
-	public function changePassword(Request $request)
-	{
-		$user = $request->user();
-		$request->validate([
-			'current_password' => ['required', 'string'],
-			'password' => ['required', 'string', 'min:8', 'confirmed'],
-		]);
+    public function changePassword(Request $request)
+    {
+        $user = $request->user();
 
-		if (!Hash::check($request->input('current_password'), $user->password)) {
-			return back()->withErrors([
-				'current_password' => 'The provided password does not match our records.',
-			]);
-		}
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'كلمة المرور الحالية مطلوبة.',
+            'password.required' => 'كلمة المرور الجديدة مطلوبة.',
+            'password.min' => 'كلمة المرور الجديدة يجب ألا تقل عن 8 أحرف.',
+            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق.',
+        ]);
 
-		$user->forceFill([
-			'password' => Hash::make($request->input('password')),
-		])->save();
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'كلمة المرور الحالية غير صحيحة.',
+            ]);
+        }
 
-		return back()->with('status', 'Password updated');
-	}
+        $user->forceFill([
+            'password' => Hash::make($request->input('password')),
+        ])->save();
+
+        return back()->with('status', 'تم تحديث كلمة المرور بنجاح.');
+    }
 }

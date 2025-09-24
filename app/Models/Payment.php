@@ -10,6 +10,19 @@ class Payment extends Model
 {
 	use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'contract_id',
+        'month',
+        'amount_due',
+        'amount_paid',
+        'paid_at',
+    ];
+
 	/**
 	 * Get the contract that owns the payment.
 	 */
