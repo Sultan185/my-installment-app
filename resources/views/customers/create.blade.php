@@ -19,6 +19,10 @@
 			<form method="POST" action="{{ route('customers.store') }}" class="row g-3">
 				@csrf
 				<div class="col-12">
+					<label for="customer_number" class="form-label">رقم العميل</label>
+					<input id="customer_number" name="customer_number" type="text" value="{{ old('customer_number') }}" required class="form-control" />
+				</div>
+				<div class="col-12">
 					<label for="name" class="form-label">الاسم</label>
 					<input id="name" name="name" type="text" value="{{ old('name') }}" required class="form-control" />
 				</div>

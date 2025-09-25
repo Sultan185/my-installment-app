@@ -29,6 +29,7 @@ class CustomerController extends Controller
 		$customer = Customer::query()
 			->where('phone', $raw)
 			->orWhere('national_id', $raw)
+			->orWhere('customer_number', $raw)
 			->first();
 
 		if ($customer) {
@@ -54,6 +55,7 @@ class CustomerController extends Controller
 	public function store(Request $request)
 	{
 		$validated = $request->validate([
+			'customer_number' => ['required', 'string', 'max:50', 'unique:customers,customer_number'],
 			'name' => ['required', 'string', 'max:255'],
 			'national_id' => ['required', 'string', 'max:50', 'unique:customers,national_id'],
 			'phone' => ['required', 'string', 'max:30'],
@@ -72,6 +74,7 @@ class CustomerController extends Controller
 	public function update(Request $request, Customer $customer)
 	{
 		$validated = $request->validate([
+			'customer_number' => ['required', 'string', 'max:50', 'unique:customers,customer_number,' . $customer->id],
 			'name' => ['required', 'string', 'max:255'],
 			'national_id' => ['required', 'string', 'max:50', 'unique:customers,national_id,' . $customer->id],
 			'phone' => ['required', 'string', 'max:30'],

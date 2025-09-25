@@ -38,13 +38,7 @@ class PaymentController extends Controller
             ])->withInput();
         }
 
-        // Prevent exceeding the configured number of installments
-        $existingPaymentsCount = $contract->payments()->count();
-        if ($existingPaymentsCount >= (int) $contract->installment_months) {
-            return back()->withErrors(['month' => 'تم الوصول للحد الأقصى لعدد الدفعات لهذا العقد.']);
-        }
-
-        // Disallow duplicate month records for same contract
+        // Check if there is already a payment row for the same month
         $existingForMonth = Payment::where('contract_id', $contract->id)
             ->where('month', $normalizedMonth)
             ->first();
@@ -61,6 +55,12 @@ class PaymentController extends Controller
             $contract->remaining_amount = max(0, (float) $contract->remaining_amount - $toApply);
             $contract->save();
         } else {
+            // Only enforce the installments count when creating a NEW month entry
+            $existingPaymentsCount = $contract->payments()->count();
+            if ($existingPaymentsCount >= (int) $contract->installment_months) {
+                return back()->withErrors(['month' => 'تم الوصول للحد الأقصى لعدد الدفعات لهذا العقد.']);
+            }
+
             // Create new payment row for the month using full entered amount
             $toApply = (float) $validated['amount_paid'];
 

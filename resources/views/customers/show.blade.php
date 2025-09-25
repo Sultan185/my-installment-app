@@ -31,6 +31,10 @@
 					<div class="fw-bold">{{ $customer->name }}</div>
 				</div>
 				<div class="col-12 col-md-4">
+					<div class="text-muted">رقم العميل</div>
+					<div class="fw-bold">{{ $customer->customer_number }}</div>
+				</div>
+				<div class="col-12 col-md-4">
 					<div class="text-muted">الرقم القومي</div>
 					<div class="fw-bold">{{ $customer->national_id }}</div>
 				</div>
@@ -74,8 +78,9 @@
 								<th>الرقم التسلسلي</th>
 								<th>إجمالي السعر</th>
 								<th>المقدم</th>
-								<th>المتبقي</th>
-								<th>الأشهر</th>
+								<th> المبلغ المتبقي </th>
+								<th> عدد الأشهر</th>
+								<th> الأشهر المتبقية</th>
 								<th>تاريخ البدء</th>
 							</tr>
 						</thead>
@@ -87,11 +92,12 @@
 									<td>{{ number_format($contract->price_total, 2) }}</td>
 									<td>{{ number_format($contract->down_payment, 2) }}</td>
 									<td>{{ number_format($contract->remaining_amount, 2) }}</td>
-									<td>{{ $contract->installment_months }}</td>
-								<td>{{ \Carbon\Carbon::parse($contract->start_date)->format('Y-m-d') }}</td>
+								<td>{{ $contract->installment_months }}</td>
+								<td>{{ max($contract->installment_months - $contract->payments->count(), 0) }}</td>
+							<td>{{ \Carbon\Carbon::parse($contract->start_date)->format('Y-m-d') }}</td>
 								</tr>
 							<tr>
-								<td colspan="7">
+							<td colspan="8">
 									@if ($contract->payments->isNotEmpty())
 										<div class="table-responsive mb-3">
 											<table class="table table-sm table-bordered">

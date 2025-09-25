@@ -20,6 +20,10 @@
 				@csrf
 				@method('PUT')
 				<div class="col-12">
+					<label for="customer_number" class="form-label">رقم العميل</label>
+					<input id="customer_number" name="customer_number" type="text" value="{{ old('customer_number', $customer->customer_number) }}" required class="form-control" />
+				</div>
+				<div class="col-12">
 					<label for="name" class="form-label">الاسم</label>
 					<input id="name" name="name" type="text" value="{{ old('name', $customer->name) }}" required class="form-control" />
 				</div>
